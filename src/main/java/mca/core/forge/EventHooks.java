@@ -83,15 +83,6 @@ public class EventHooks {
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!MCA.updateAvailable) return;
-        TextComponentString updateMessage = new TextComponentString(Constants.Color.DARKGREEN + "An update for Minecraft Comes Alive is available: v" + MCA.latestVersion);
-        String updateURLText = Constants.Color.YELLOW + "Click " + Constants.Color.BLUE + Constants.Format.ITALIC + Constants.Format.UNDERLINE + "here" + Constants.Format.RESET + Constants.Color.YELLOW + " to download the update.";
-
-        TextComponentString chatComponentUpdate = new TextComponentString(updateURLText);
-        chatComponentUpdate.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraftcomesalive.com/download"));
-        chatComponentUpdate.getStyle().setUnderlined(true);
-
-        event.player.sendMessage(updateMessage);
-        event.player.sendMessage(chatComponentUpdate);
 
         MCA.updateAvailable = false;
     }

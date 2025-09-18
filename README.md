@@ -1,4 +1,4 @@
-Minecraft Comes Alive
+Minecraft Comes Alive (but fixed)
 =====================
 Minecraft Comes Alive (MCA) is a Minecraft mod that replaces Minecraft's villagers with normal player-like NPCs. It works in single player, LAN, and SMP.
 
@@ -15,6 +15,12 @@ For development, MCA depends on Lombok. It will be installed automatically when 
 
 ## Contributing
 Any contributions to are welcome. Simply clone into your workspace, set it up, make your changes, and submit a pull request for review.
+
+## Fixes
+- Make crash reports go to mc.logs instead of defunct site
+- Make supporter list static instead of checking defunct site
+<br>(this really hurt startup time, you couldn't disable this)
+- Remove update checking from defunct site
 
 ## Credits
 These individuals made substantial contributions to MCA - without them, continued progress may have been impossible.

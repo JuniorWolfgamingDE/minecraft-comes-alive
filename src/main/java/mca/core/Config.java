@@ -61,8 +61,8 @@ public final class Config implements Serializable {
         villagerChatPrefix = config.get("General", "Villager Chat Prefix", "", "Formatting prefix used for all chat with villagers.").getString();
         allowPlayerMarriage = config.get("General", "Allow Player Marriage?", true, "Enables or disables player marriage.").getBoolean();
         enableAdminCommands = config.get("General", "Enable Admin Commands?", true, "Enables or disables MCA admin commands for ops.").getBoolean();
-        allowCrashReporting = config.get("General", "Allow Crash Reporting?", true, "If enabled, sends crash reports to MCA developers.").getBoolean();
-        allowUpdateChecking = config.get("General", "Allow Update Checking?", true, "If enabled, notifies you when an update to MCA is available.").getBoolean();
+        allowCrashReporting = config.get("General", "Allow Crash Reporting?", true, "If enabled, uploads crash reports to mclo.gs and logs the link. If you use VanillaFix or CensoredASM, you can disable this.").getBoolean();
+        allowUpdateChecking = config.get("General", "Allow Update Checking?", false, "Only kept for compatibility, will not check for updates. You can keep this disabled.").getBoolean();
         allowRoseGoldGeneration = config.get("General", "Allow Rose Gold World Generation", true, "If enabled, generates rose gold in your world. If disabled, generates stone instead.").getBoolean();
         villagerMaxHealth = config.get("General", "Villager Max Health", 20, "Each villager's maximum health. 1 point equals 1 heart.").getInt();
         config.save();

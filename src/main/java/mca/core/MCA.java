@@ -36,6 +36,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Mod(modid = MCA.MODID, name = MCA.NAME, version = MCA.VERSION, guiFactory = "mca.client.MCAGuiFactory")
 public class MCA {
@@ -51,9 +54,10 @@ public class MCA {
     private static Localizer localizer;
     private static Config config;
     private static long startupTimestamp;
-    public static String latestVersion = "";
     public static boolean updateAvailable = false;
     public String[] supporters = new String[0];
+    private Set<String> uploadedReports = new HashSet<>();
+    private ExecutorService uploadExecutor = Executors.newSingleThreadExecutor();
 
     public static Logger getLog() {
         return logger;
@@ -94,15 +98,12 @@ public class MCA {
         NetMCA.registerMessages();
 
         if (MCA.getConfig().allowUpdateChecking) {
-            latestVersion = Util.httpGet("https://minecraftcomesalive.com/api/latest");
-            if (!latestVersion.equals(VERSION) && !latestVersion.equals("")) {
-                updateAvailable = true;
-                MCA.getLog().warn("An update for Minecraft Comes Alive is available: v" + latestVersion);
-            }
+            MCA.getLog().warn("Update checks have been removed by JuniorWMG. Please disable \"Allow Update Checking\" in the MCA config. This option is only kept for compatibility reasons.");
         }
 
-        supporters = Util.httpGet("https://minecraftcomesalive.com/api/supporters").split(",");
-        MCA.getLog().info("Loaded " + supporters.length + " supporters.");
+        // I know, I've done this stupidly simple - but it works. Supporter names from the Internet Archive.
+        supporters = "Furzball,wuffleoreo,Nicole,Nia,Alex,AdmiralWilson,Ty,onquicklylu,Perf3ctDude,Cezary,Kalika,UnidentifiedDuck,Theresa G.,Andrew C.,Joya F.,Mike E.".split(",");
+        MCA.getLog().info("Loaded " + supporters.length + " last known supporters.");
     }
 
     @EventHandler
@@ -148,39 +149,50 @@ public class MCA {
                 if (crashReportFiles != null) {
                     Optional<File> newestFile = Arrays.stream(crashReportFiles).max(Comparator.comparingLong(File::lastModified));
                     if (newestFile.isPresent() && newestFile.get().lastModified() > startupTimestamp) {
-                        // Raw Java for sending the POST request as the HttpClient from Apache libs is not present on servers.
-                        MCA.getLog().warn("Crash detected! Attempting to upload report...");
-                        Map<String, String> payload = new HashMap<>();
-                        payload.put("minecraft_version", FMLCommonHandler.instance().getMinecraftServerInstance().getMinecraftVersion());
-                        payload.put("operating_system", System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version"));
-                        payload.put("java_version", System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
-                        payload.put("mod_version", MCA.VERSION);
-                        payload.put("body", FileUtils.readFileToString(newestFile.get(), "UTF-8"));
-
-                        byte[] out = new Gson().toJson(payload).getBytes(StandardCharsets.UTF_8);
-                        URL url = new URL("http://minecraftcomesalive.com/api/crash-reports");
-                        URLConnection con = url.openConnection();
-                        HttpURLConnection http = (HttpURLConnection)con;
-                        http.setRequestMethod("POST");
-                        http.setDoOutput(true);
-                        http.setFixedLengthStreamingMode(out.length);
-                        http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                        http.setRequestProperty("User-Agent", "Minecraft Client " + FMLCommonHandler.instance().getMinecraftServerInstance().getMinecraftVersion());
-                        http.connect();
-                        OutputStream os = http.getOutputStream();
-                        os.write(out);
-                        os.flush();
-                        os.close();
-                        if (http.getResponseCode() != 200) {
-                            MCA.getLog().error("Failed to submit crash report. Non-OK response code returned: " + http.getResponseCode());
-                        } else {
-                            MCA.getLog().warn("Crash report submitted successfully.");
+                        String fileName = newestFile.get().getName();
+                        if (!uploadedReports.contains(fileName)) {
+                            uploadedReports.add(fileName);
+                            uploadCrashReportAsync(newestFile.get());
                         }
                     }
                 }
-            } catch (IOException e) {
-                MCA.getLog().error("An unexpected error occurred while attempting to submit the crash report.", e);
+            } catch (Exception e) {
+                MCA.getLog().error("An unexpected error occurred while checking for crash reports.", e);
             }
         }
+    }
+
+    private void uploadCrashReportAsync(File crashFile) {
+        uploadExecutor.submit(() -> {
+            try {
+                MCA.getLog().warn("Crash detected! Attempting to upload report...");
+                
+                String content = "content=" + java.net.URLEncoder.encode(FileUtils.readFileToString(crashFile, "UTF-8"), "UTF-8");
+                byte[] out = content.getBytes(StandardCharsets.UTF_8);
+                
+                HttpURLConnection http = (HttpURLConnection) new URL("https://api.mclo.gs/1/log").openConnection();
+                http.setRequestMethod("POST");
+                http.setDoOutput(true);
+                http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                
+                http.getOutputStream().write(out);
+                
+                if (http.getResponseCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(http.getInputStream()));
+                    String response = reader.readLine();
+                    reader.close();
+                    
+                    int urlStart = response.indexOf("\"url\":\"") + 7;
+                    int urlEnd = response.indexOf("\"", urlStart);
+                    String reportUrl = response.substring(urlStart, urlEnd).replace("\\/", "/");
+                    
+                    MCA.getLog().warn("Crash report uploaded successfully: " + reportUrl);
+                } else {
+                    MCA.getLog().error("Failed to submit crash report. Response code: " + http.getResponseCode());
+                }
+            } catch (IOException e) {
+                MCA.getLog().error("An unexpected error occurred while uploading crash report.", e);
+            }
+        });
     }
 }
