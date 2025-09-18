@@ -82,6 +82,11 @@ public class GuiInteract extends GuiScreen {
         super.drawScreen(i, j, f);
         drawIcons();
         drawTextPopups();
+        
+        if (displaySuccessChance && activeKey.equals("interact")) {
+            drawSuccessChances();
+            this.drawHoveringText(MCA.getLocalizer().localize("gui.interact.label.successchance"), 10, height - 10);
+        }
 
         mouseX = Mouse.getEventX() * width / mc.displayWidth;
         mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1;
@@ -183,6 +188,24 @@ public class GuiInteract extends GuiScreen {
 
         if (canDrawGiftIcon() && hoveringOverGiftIcon()) this.drawHoveringText(MCA.getLocalizer().localize("gui.interact.label.gift"), 35, 145);
     }
+    
+    private void drawSuccessChances() {
+        PlayerHistory history = villager.getPlayerHistoryFor(player.getUniqueID());
+        
+        for (GuiButton button : buttonList) {
+            if (button instanceof GuiButtonEx) {
+                GuiButtonEx btnEx = (GuiButtonEx) button;
+                if (btnEx.getApiButton().isInteraction()) {
+                    float successChance = villager.calculateInteractionSuccessChance(history, btnEx.getApiButton());
+                    String chanceText = String.format("%.1f%%", successChance * 100);
+                    
+                    this.drawHoveringText(chanceText, 
+                            btnEx.x - fontRenderer.getStringWidth(chanceText) - 42, 
+                            btnEx.y + (btnEx.height / 2) + 8);
+                }
+            }
+        }
+    }
 
     private boolean hoveringOverHeartsIcon() {
         return mouseX <= 32 && mouseX >= 16 && mouseY >= 32 && mouseY <= 48;
@@ -264,7 +287,7 @@ public class GuiInteract extends GuiScreen {
         buttonList.clear();
         API.addButtons("interact", villager, player, this);
     }
-
+    
     private void drawWorkButtonMenu() {
         buttonList.clear();
         API.addButtons("work", villager, player, this);

@@ -594,16 +594,25 @@ public class EntityVillagerMCA extends EntityVillager {
         set(MARRIAGE_STATE, EnumMarriageState.NOT_MARRIED.getId());
     }
 
-    private void handleInteraction(EntityPlayerMP player, PlayerHistory history, APIButton button) {
+    public float calculateInteractionSuccessChance(PlayerHistory history, APIButton button) {
         float successChance = 0.85F;
+        
+        successChance -= button.getConstraints().contains(EnumConstraint.ADULTS) ? 0.25F : 0.0F;
+        successChance += (history.getHearts() / 10.0D) * 0.025F;
+        
+        if (MCA.getConfig().enableDiminishingReturns) {
+            successChance -= history.getInteractionFatigue() * 0.05F;
+        }
+        
+        successChance = Math.max(0.0F, Math.min(1.0F, successChance));
+        return successChance;
+    }
+    
+    private void handleInteraction(EntityPlayerMP player, PlayerHistory history, APIButton button) {
+        float successChance = calculateInteractionSuccessChance(history, button);
         int heartsBoost = button.getConstraints().contains(EnumConstraint.ADULTS) ? 15 : 5;
 
         String interactionName = button.getIdentifier().replace("gui.button.", "");
-
-        successChance -= button.getConstraints().contains(EnumConstraint.ADULTS) ? 0.25F : 0.0F;
-        successChance += (history.getHearts() / 10.0D) * 0.025F;
-
-        if (MCA.getConfig().enableDiminishingReturns) successChance -= history.getInteractionFatigue() * 0.05F;
 
         boolean succeeded = rand.nextFloat() < successChance;
         if (MCA.getConfig().enableDiminishingReturns && succeeded)

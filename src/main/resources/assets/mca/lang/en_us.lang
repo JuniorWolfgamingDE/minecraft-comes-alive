@@ -243,6 +243,7 @@ gui.interact.label.engaged=Engaged to %v1%
 gui.interact.label.notmarried=Not married
 gui.interact.label.parents=Parents: %v1% and %v2%
 gui.interact.label.gift=Gift available. Click to claim.
+gui.interact.label.successchance=Chance inspector is enabled.
 
 spouse.interaction.marry.fail.marriedtogiver1=It's a pretty ring, but I am already married to you, silly.
 spouse.interaction.marry.fail.marriedtogiver2=We are already married. Did you forget?
