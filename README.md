@@ -22,6 +22,9 @@ Any contributions to are welcome. Simply clone into your workspace, set it up, m
 <br>(this really hurt startup time, you couldn't disable this)
 - Remove update checking from defunct site
 
+## Changes
+- Add back success chance inspector by pressing left control 
+
 ## Credits
 These individuals made substantial contributions to MCA - without them, continued progress may have been impossible.
  - SheWolfDeadly
