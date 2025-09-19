@@ -24,6 +24,7 @@ Any contributions to are welcome. Simply clone into your workspace, set it up, m
 
 ## Changes
 - Add back success chance inspector by pressing left control 
+- Add back girth & height customization in Villager Editor
 
 ## Credits
 These individuals made substantial contributions to MCA - without them, continued progress may have been impossible.
