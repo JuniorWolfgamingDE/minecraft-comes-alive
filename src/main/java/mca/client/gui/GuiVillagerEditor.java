@@ -6,6 +6,7 @@ import mca.client.gui.component.GuiButtonEx;
 import mca.core.MCA;
 import mca.core.forge.NetMCA;
 import mca.entity.EntityVillagerMCA;
+import mca.enums.EnumGender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -18,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
+import java.util.Optional;
 
 @SideOnly(Side.CLIENT)
 public class GuiVillagerEditor extends GuiScreen {
@@ -27,7 +29,7 @@ public class GuiVillagerEditor extends GuiScreen {
     private GuiTextField nameTextField;
     private GuiTextField professionTextField;
     private GuiTextField textureTextField;
-
+    
     public GuiVillagerEditor(EntityVillagerMCA EntityHuman, EntityPlayer player) {
         super();
         this.player = player;
@@ -40,6 +42,7 @@ public class GuiVillagerEditor extends GuiScreen {
         nameTextField.updateCursorCounter();
         professionTextField.updateCursorCounter();
         textureTextField.updateCursorCounter();
+        updateButtonsWithVariables();
     }
 
     @Override
@@ -47,15 +50,19 @@ public class GuiVillagerEditor extends GuiScreen {
         Keyboard.enableRepeatEvents(true);
         drawEditorGui();
 
-        nameTextField = new GuiTextField(1, fontRenderer, width / 2 - 205, height / 2 - 95, 150, 20);
+        nameTextField = new GuiTextField(1, fontRenderer, width / 2 - 205, height / 2 - 95, 120, 20);
         nameTextField.setMaxStringLength(32);
         nameTextField.setText(villager.get(EntityVillagerMCA.VILLAGER_NAME));
-        professionTextField = new GuiTextField(2, fontRenderer, width / 2 - 190, height / 2 + 10, 250, 20);
+        nameTextField.setCursorPositionZero(); // If a name is really long, they probably have a last name
+        
+        professionTextField = new GuiTextField(2, fontRenderer, width / 2 - 205, height / 2 - 49, 160, 20);
         professionTextField.setMaxStringLength(64);
         professionTextField.setText(villager.getVanillaCareer().getName());
-        textureTextField = new GuiTextField(3, fontRenderer, width / 2 - 190, height / 2 - 15, 250, 20);
+        
+        textureTextField = new GuiTextField(3, fontRenderer, width / 2 - 205, height / 2 - 23, 160, 20);
         textureTextField.setMaxStringLength(128);
         textureTextField.setText(villager.get(EntityVillagerMCA.TEXTURE));
+        textureTextField.setCursorPositionEnd(); // Texture paths are really long, required to show the whole .png name
     }
 
     @Override
@@ -121,13 +128,30 @@ public class GuiVillagerEditor extends GuiScreen {
     private void drawEditorGui() {
         buttonList.clear();
         API.addButtons("editor", villager, player, this);
+        updateButtonsWithVariables();
+    }
+    
+    private void updateButtonsWithVariables() {
+    	Optional<GuiButtonEx> genderBtn = API.getButton("gui.button.gender", this);
+    	Optional<GuiButtonEx> infectedBtn = API.getButton("gui.button.infected", this);
+    	if (genderBtn.isPresent()) {
+    	    EnumGender gender = EnumGender.byId(villager.get(EntityVillagerMCA.GENDER));
+    	    String colorCode = gender == EnumGender.MALE ? "§b" : "§d";
+    	    genderBtn.get().displayString = MCA.getLocalizer().localize("gui.button.gender.display", colorCode, gender.toString().toLowerCase());
+    	}
+    	if (infectedBtn.isPresent()) {
+    	    Boolean isInfected = villager.get(EntityVillagerMCA.IS_INFECTED);
+    	    String colorCode = isInfected == true ? "§c" : "§r";
+    	    infectedBtn.get().displayString = MCA.getLocalizer().localize("gui.button.infected.display", colorCode, isInfected.toString());
+    	}
     }
 
     @Override
     public void drawScreen(int sizeX, int sizeY, float offset) {
         drawGradientRect(0, 0, width, height, -1072689136, -804253680);
-        drawString(fontRenderer, "Name:", width / 2 - 205, height / 2 - 110, 0xffffff);
-        drawCenteredString(fontRenderer, MCA.getLocalizer().localize("gui.title.editor"), width / 2, height / 2 - 110, 0xffffff);
+        drawString(fontRenderer, MCA.getLocalizer().localize("gui.title.editor.person"), width / 2 - 205, height / 2 - 110, 0xffffff);
+        drawString(fontRenderer, MCA.getLocalizer().localize("gui.title.editor.looks"), width / 2 - 205, height / 2 - 64, 0xffffff);
+        drawCenteredString(fontRenderer, MCA.getLocalizer().localize("gui.title.editor"), width / 2, height / 2 - 128, 0xffffff);
         nameTextField.drawTextBox();
         professionTextField.drawTextBox();
         textureTextField.drawTextBox();

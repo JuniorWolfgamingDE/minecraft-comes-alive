@@ -2,7 +2,7 @@
   {
     "id": 1,
     "identifier": "gui.button.random",
-    "x": -50,
+    "x": -80,
     "y": -95,
     "width": 60,
     "height": 20,
@@ -11,25 +11,25 @@
   {
     "id": 2,
     "identifier": "gui.button.gender",
-    "x": -190,
-    "y": -40,
-    "width": 175,
+    "x": -17,
+    "y": -95,
+    "width": 84,
     "height": 20,
     "notifyServer": true
   },
   {
     "id": 3,
     "identifier": "gui.button.texture.set",
-    "x": 70,
-    "y": -15,
+    "x": -40,
+    "y": -23,
     "width": 60,
     "height": 20
   },
   {
     "id": 4,
     "identifier": "gui.button.texture.randomize",
-    "x": 140,
-    "y": -15,
+    "x": 23,
+    "y": -23,
     "width": 60,
     "height": 20,
     "notifyServer": true
@@ -37,16 +37,16 @@
   {
     "id": 5,
     "identifier": "gui.button.profession.set",
-    "x": 70,
-    "y": 10,
+    "x": -40,
+    "y": -49,
     "width": 60,
     "height": 20
   },
   {
     "id": 6,
     "identifier": "gui.button.profession.randomize",
-    "x": 140,
-    "y": 10,
+    "x": 23,
+    "y": -49,
     "width": 60,
     "height": 20,
     "notifyServer": true
@@ -54,9 +54,9 @@
   {
     "id": 7,
     "identifier": "gui.button.infected",
-    "x": -190,
-    "y": 35,
-    "width": 175,
+    "x": 70,
+    "y": -95,
+    "width": 84,
     "height": 20,
     "notifyServer": true
   },
@@ -75,5 +75,41 @@
     "y": 85,
     "width": 75,
     "height": 20
+  },
+  {
+    "id": 10,
+    "identifier": "gui.button.tallness.increase",
+    "x": -20,
+    "y": 35,
+    "width": 40,
+    "height": 20,
+    "notifyServer": true
+  },
+  {
+    "id": 11,
+    "identifier": "gui.button.tallness.decrease",
+    "x": 40,
+    "y": 35,
+    "width": 40,
+    "height": 20,
+    "notifyServer": true
+  },
+  {
+    "id": 12,
+    "identifier": "gui.button.girth.increase",
+    "x": 90,
+    "y": 35,
+    "width": 40,
+    "height": 20,
+    "notifyServer": true
+  },
+  {
+    "id": 13,
+    "identifier": "gui.button.girth.decrease",
+    "x": 140,
+    "y": 35,
+    "width": 40,
+    "height": 20,
+    "notifyServer": true
   }
 ]

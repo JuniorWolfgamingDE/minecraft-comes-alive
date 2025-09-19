@@ -481,7 +481,15 @@ public class EntityVillagerMCA extends EntityVillager {
 
     private void setSizeForAge() {
         EnumAgeState age = EnumAgeState.byId(get(AGE_STATE));
-        this.setSize(age.getWidth(), age.getHeight());
+        float baseHeight = age.getHeight();
+        float baseWidth = age.getWidth();
+        float modifiedHeight = baseHeight + (get(TALLNESS) * 0.1f);
+        float modifiedWidth = baseWidth + (get(GIRTH) * 0.1f);
+        
+        modifiedHeight = Math.max(0.5f, Math.min(modifiedHeight, 3.0f));
+        modifiedWidth = Math.max(0.5f, Math.min(modifiedWidth, 3.0f));
+        
+        this.setSize(modifiedWidth, modifiedHeight);
         this.setScale(1.0F); // trigger rebuild of the bounding box
     }
 
@@ -744,7 +752,22 @@ public class EntityVillagerMCA extends EntityVillager {
             case "gui.button.stopworking":
                 stopChore();
                 break;
+                
+            // JuniorWMG type actions
+            case "gui.button.tallness.increase":
+            	set(TALLNESS, get(TALLNESS) + 1.0f);
+                break;
+            case "gui.button.tallness.decrease":
+            	set(TALLNESS, get(TALLNESS) - 1.0f);
+                break;
+            case "gui.button.girth.increase":
+            	set(GIRTH, get(GIRTH) + 1.0f);
+                break;
+            case "gui.button.girth.decrease":
+            	set(GIRTH, get(GIRTH) - 1.0f);
+                break;
         }
+        
     }
 
     private boolean handleSpecialCaseGift(EntityPlayer player, ItemStack stack) {

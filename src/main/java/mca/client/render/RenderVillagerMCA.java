@@ -32,7 +32,11 @@ public class RenderVillagerMCA<T extends EntityVillagerMCA> extends RenderBiped<
             float scaleForAge = EnumAgeState.byId(villager.get(EntityVillagerMCA.AGE_STATE)).getScaleForAge();
             GlStateManager.scale(scaleForAge, scaleForAge, scaleForAge);
         }
-
+        
+        float tallnessScale = 1.0F + (villager.get(EntityVillagerMCA.TALLNESS) * 0.1F);
+        float girthScale = 1.0F + (villager.get(EntityVillagerMCA.GIRTH) * 0.1F);
+        GlStateManager.scale(girthScale, tallnessScale, girthScale);
+        
         if (villager.isRiding()) {
             GlStateManager.translate(0, 0.5, 0);
         }

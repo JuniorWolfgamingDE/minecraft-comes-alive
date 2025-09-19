@@ -1,5 +1,6 @@
 package mca.command;
 
+import mca.api.API;
 import mca.core.Constants;
 import mca.core.MCA;
 import mca.core.MCAServer;
@@ -78,6 +79,10 @@ public class CommandMCA extends CommandBase {
                         player.sendMessage(new TextComponentString("Player not found on the server."));
                     }
                     break;
+                case "rb": 
+                	API.loadButtons();
+                	player.sendMessage(new TextComponentString("Reloaded button maps."));
+                	break;
                 default:
                     throw new WrongUsageException("");
             }
