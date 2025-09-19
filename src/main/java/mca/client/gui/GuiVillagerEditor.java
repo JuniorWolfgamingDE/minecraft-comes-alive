@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -79,7 +80,7 @@ public class GuiVillagerEditor extends GuiScreen {
             mc.displayGuiScreen(null);
         } else if (btn.getIdentifier().equals("gui.button.copyuuid")) {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(villager.getUniqueID().toString()), null);
-            Minecraft.getMinecraft().player.sendChatMessage("Villager UUID copied to clipboard.");
+            player.sendMessage(new TextComponentString("Villager UUID copied to clipboard."));
         } else if (btn.getIdentifier().equals("gui.button.profession.set")) {
             String profession = professionTextField.getText();
             NetMCA.INSTANCE.sendToServer(new NetMCA.SetProfession(villager.getUniqueID(), profession));
