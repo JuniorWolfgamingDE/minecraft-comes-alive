@@ -753,18 +753,21 @@ public class EntityVillagerMCA extends EntityVillager {
                 stopChore();
                 break;
                 
-            // JuniorWMG type actions
             case "gui.button.tallness.increase":
-            	set(TALLNESS, get(TALLNESS) + 1.0f);
+                float newTallness = Math.min(get(TALLNESS) + 1.0f, 32.0f);
+                set(TALLNESS, newTallness);
                 break;
             case "gui.button.tallness.decrease":
-            	set(TALLNESS, get(TALLNESS) - 1.0f);
+                float newTallnessDecrease = Math.max(get(TALLNESS) - 1.0f, -9.0f);
+                set(TALLNESS, newTallnessDecrease);
                 break;
             case "gui.button.girth.increase":
-            	set(GIRTH, get(GIRTH) + 1.0f);
+                float newGirth = Math.min(get(GIRTH) + 1.0f, 32.0f);
+                set(GIRTH, newGirth);
                 break;
             case "gui.button.girth.decrease":
-            	set(GIRTH, get(GIRTH) - 1.0f);
+                float newGirthDecrease = Math.max(get(GIRTH) - 1.0f, -9.0f);
+                set(GIRTH, newGirthDecrease);
                 break;
         }
         
